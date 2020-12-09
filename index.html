@@ -579,25 +579,22 @@
 
                     <div class="col-md-8 col-md-offset-2 contact box-style">
                         <div id="message-info"></div>
-                        <!-- Forms can be functional only on server. Upload to your server when testing. -->
-                        <form id="contactform" method="post">
-
+                        <form id="alley_contactform" method="post">
                             <div class="col-sm-12">
-                                <input name="name" id="name" placeholder="Dit navn *"/>
+                                <input type="text" name="Name" id="name" placeholder="Dit navn *"/>
                             </div>
                             <div class="col-sm-6">
-                                <input name="email" id="email" placeholder="Din email *"/>
+                                <input type="text" name="Email" id="email" placeholder="Din email *"/>
                             </div>
                             <div class="col-sm-6">
-                                <input name="phone" id="phone" placeholder="Dit telefonnummer"/>
+                                <input type="text" name="Phone" id="phone" placeholder="Dit telefonnummer"/>
                             </div>
                             <div class="col-sm-12">
-                                <textarea name="message" rows="9" id="message" placeholder="Din besked *"></textarea>
+                                <textarea name="Message" rows="9" id="message" placeholder="Din besked *"></textarea>
                             </div>
                             <div class="col-md-12">
                                 <input type="submit" class="submit btn btn-lg btn-primary" id="submit" value="Send besked 💌"/>
                             </div>
-
                         </form>
                     </div>
 
@@ -605,18 +602,6 @@
             </div>
         </section>
         <!-- End Contact Form -->
-
-        <!-- Google Map -->
-        <section
-            id="vossen-map"
-            data-map-address="160 Central Park West, New York, NY 10023, USA"
-            data-marker-info="Come visit us today!<br>4th West St, New York"
-            data-maps-api-key="AIzaSyBD3JE1T5ssqLMdfRgR1bErpuWNBtIMHbI"
-            data-map-zoom="16"
-            data-map-height="500px"
-            data-map-style="light"> <!-- dark, light, standard -->
-        </section>
-        <!-- End Google Map -->
 
         <!-- Start Footer -->
         <footer id="footer" class="footer style-1 dark">
@@ -639,6 +624,67 @@
         <script src="js/jquery.js"></script>
         <script src="js/init.js"></script>
         <script src="js/scripts.js"></script>
+
+        <script type="text/javascript">
+            function setSubmitButtonStatus() {
+                let name = $("#name").val();
+                let email = $("#email").val();
+                let phone = $("#phone").val();
+                let message = $("#message").val();
+
+                let all = (name + email + phone + message).replace(" ", "");
+
+                let formDisabled = all.length == 0;
+
+                console.info("gjhieogje", {all: all, formDisabled: formDisabled})
+                
+                $("#alley_contactform").find("input[type=submit]").prop("disabled", formDisabled);
+            }
+
+            $(function() {
+                $("#alley_contactform").find("input[type=text], textarea").on("keyup keypress paste", function() {
+                    setTimeout(setSubmitButtonStatus, 10);
+                });
+
+                $(setSubmitButtonStatus);
+
+                $("#alley_contactform").on("submit", function (event) {
+                    event.preventDefault();
+
+                    let name = $("#name").val();
+                    let email = $("#email").val();
+                    let phone = $("#phone").val();
+                    let message = $("#message").val();
+
+                    let json = JSON.stringify({
+                        Name: name,
+                        Email: email,
+                        Phone: phone,
+                        Message: message
+                    });
+
+                    console.info("posting form as JSON", json);
+
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:7071/api/Function1',
+                        dataType: 'json',
+                        data: json,
+                        contentType: 'application/json',
+                        success: function(data) {
+                            alert("Tak for din besked 🙂 Vi vender tilbage til dig snarest.");
+
+                            $("#alley_contactform").find("input[type=text], textarea").val("");
+                        },
+                        error: function(_, __, error) {
+                            console.error("Error posting contact form", error);
+
+                            alert("Åh nej! – der skete en fejl!! ☹ Det er ikke sikkert, at vi har modtaget din besked. Prøv igen på et andet tidspunkt, eller kontakt os på anden vis.");
+                        }
+                    });
+                });
+            });
+        </script>
 
     </body>
 </html>
