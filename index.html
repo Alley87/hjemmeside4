@@ -635,8 +635,6 @@
                 let all = (name + email + phone + message).replace(" ", "");
 
                 let formDisabled = all.length == 0;
-
-                console.info("gjhieogje", {all: all, formDisabled: formDisabled})
                 
                 $("#alley_contactform").find("input[type=submit]").prop("disabled", formDisabled);
             }
@@ -667,7 +665,8 @@
 
                     $.ajax({
                         type: 'post',
-                        url: 'http://localhost:7071/api/Function1',
+                        //url: 'http://localhost:7071/api/Function1',
+                        url: 'https://alley87-contact.azurewebsites.net/api/Function1?code=ya/DWbAiLP1xC5ON138WqAdKwqPxw0kCBWQv3AQujKZdmtMHwkoEEg==',
                         dataType: 'json',
                         data: json,
                         contentType: 'application/json',
